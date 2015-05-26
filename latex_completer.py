@@ -6,8 +6,8 @@ import shlex
 import glob
 import logging
 
-from ycm.completers.completer import Completer
-from ycm.server import responses
+from ycmd.completers.completer import Completer
+from ycmd import responses
 
 LOG = logging.getLogger(__name__)
 
