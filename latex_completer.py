@@ -65,7 +65,7 @@ class LatexCompleter( Completer ):
         """
         return ['plaintex', 'tex']
 
-    def _FindBibEntries(self):
+    def _FindBibEntries( self, tex ):
         """
         Find BIBtex entries.
 
@@ -102,13 +102,8 @@ class LatexCompleter( Completer ):
                 )
             )
 
-        texs = " ".join(glob.glob("*.tex"))
-        cat2_process  = subprocess.Popen(shlex.split("cat %s" % texs),
+        grep3_process = subprocess.Popen(shlex.split(r"grep \\\\bibitem %s" % tex),
                                          stdout=subprocess.PIPE)
-        grep3_process = subprocess.Popen(shlex.split(r"grep \\\\bibitem"),
-                                         stdin=cat2_process.stdout,
-                                         stdout=subprocess.PIPE)
-        cat2_process.stdout.close()
 
         lines = grep3_process.communicate()[0]
 
@@ -149,9 +144,9 @@ class LatexCompleter( Completer ):
         if self.complete_target == self.LABELS:
             return self._FindLabels(request_data["filepath"])
         if self.complete_target == self.CITATIONS:
-            return self._FindBibEntries()
+            return self._FindBibEntries(request_data["filepath"])
 
         self.complete_target = self.NONE
 
-        return self._FindLabels(request_data["filepath"]) + self._FindBibEntries()
+        return self._FindLabels(request_data["filepath"]) + self._FindBibEntries(request_data["filepath"])
 
