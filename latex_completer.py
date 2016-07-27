@@ -27,10 +27,8 @@ class LatexCompleter( Completer ):
         super( LatexCompleter, self ).__init__( user_options )
         self.complete_target = self.NONE
 
-
     def DebugInfo( self, request_data ):
         return "TeX completer %d" % self.complete_target
-
 
     def ShouldUseNowInner( self, request_data ):
         """
@@ -61,13 +59,11 @@ class LatexCompleter( Completer ):
 
         return super( LatexCompleter, self ).ShouldUseNowInner( request_data )
 
-
     def SupportedFiletypes( self ):
         """
         Determines which vim filetypes we support
         """
         return ['plaintex', 'tex']
-
 
     def _FindBibEntries(self):
         """
@@ -124,22 +120,14 @@ class LatexCompleter( Completer ):
 
         return ret
 
-
-    def _FindLabels(self):
+    def _FindLabels( self, tex ):
         """
         Find LaTeX labels for \ref{} completion.
 
-        This time we scan through all .tex files in the current
-        directory and extract the content of all \label{} commands
-        as sources for completion.
+        This time we scan through the given .tex file and extract the content of all \label{} commands as sources for completion.
         """
-        texs = " ".join(glob.glob("*.tex"))
-        cat_process  = subprocess.Popen(shlex.split("cat %s" % texs),
+        grep_process = subprocess.Popen(shlex.split(r"grep \\\\label %s" % tex),
                                         stdout=subprocess.PIPE)
-        grep_process = subprocess.Popen(shlex.split(r"grep \\\\label"),
-                                        stdin=cat_process.stdout,
-                                        stdout=subprocess.PIPE)
-        cat_process.stdout.close()
 
         lines = grep_process.communicate()[0]
 
@@ -152,7 +140,6 @@ class LatexCompleter( Completer ):
 
         return ret
 
-
     def ComputeCandidatesInner( self, request_data ):
         """
         Worker function executed by the asynchronous
@@ -160,10 +147,11 @@ class LatexCompleter( Completer ):
         """
         LOG.debug("compute candidates %d" % self.complete_target)
         if self.complete_target == self.LABELS:
-            return self._FindLabels()
+            return self._FindLabels(request_data["filepath"])
         if self.complete_target == self.CITATIONS:
             return self._FindBibEntries()
 
         self.complete_target = self.NONE
 
-        return self._FindLabels() + self._FindBibEntries()
+        return self._FindLabels(request_data["filepath"]) + self._FindBibEntries()
+
