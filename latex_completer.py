@@ -51,8 +51,10 @@ class LatexCompleter( Completer ):
             LOG.debug("complete target %d" % self.complete_target)
             return True
 
-        if (line[col-5:col] == r'\ref{')  or \
-           (line[col-6:col] == r'\vref{'):
+        if (line[col-5:col] == r'\ref{') or \
+           (line[col-6:col] == r'\vref{') or \
+           (line[col-7:col] == r'\eqref{') or \
+           (line[col-9:col] == r'\pageref{'):
             self.complete_target = self.LABELS
             LOG.debug("complete target %d" % self.complete_target)
             return True
