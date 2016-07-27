@@ -105,6 +105,23 @@ class LatexCompleter( Completer ):
                     re.sub(r"@([A-Za-z]*)\s*{\s*([^,]*),.*", r"\2", l)
                 )
             )
+
+        texs = " ".join(glob.glob("*.tex"))
+        cat2_process  = subprocess.Popen(shlex.split("cat %s" % texs),
+                                         stdout=subprocess.PIPE)
+        grep3_process = subprocess.Popen(shlex.split(r"grep \\\\bibitem"),
+                                         stdin=cat2_process.stdout,
+                                         stdout=subprocess.PIPE)
+        cat2_process.stdout.close()
+
+        lines = grep3_process.communicate()[0]
+
+        for label in lines.split("\n"):
+            ret.append(responses.BuildCompletionData(
+                    re.sub(r".*\bibitem{(.*)}.*", r"\1", label)
+                )
+            )
+
         return ret
 
 
