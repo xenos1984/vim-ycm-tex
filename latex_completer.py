@@ -148,7 +148,7 @@ class LatexCompleter( Completer ):
 		lines = grep3_process.communicate()[0]
 
 		for label in lines.decode().split("\n"):
-			ret.append(responses.BuildCompletionData(re.sub(r".*\bibitem{(.*)}.*", r"\1", label)))
+			ret.append(responses.BuildCompletionData(re.sub(r".*\bibitem{([^}]*)}.*", r"\1", label)))
 
 		return ret
 
@@ -176,7 +176,7 @@ class LatexCompleter( Completer ):
 
 		ret = []
 		for label in lines.decode().split("\n"):
-			ret.append(responses.BuildCompletionData(re.sub(r".*\label{(.*)}.*", r"\1", label)))
+			ret.append(responses.BuildCompletionData(re.sub(r".*\label{([^}]*)}.*", r"\1", label)))
 
 		return ret
 
