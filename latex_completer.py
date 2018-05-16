@@ -170,13 +170,13 @@ class LatexCompleter( Completer ):
 
 		This time we scan through the given .tex file and extract the content of all \label{} commands as sources for completion.
 		"""
-		grep_process = subprocess.Popen(shlex.split(r"grep \\\\label %s" % tex), stdout=subprocess.PIPE)
+		grep_process = subprocess.Popen(shlex.split(r'grep \\\\label %s' % tex), stdout=subprocess.PIPE)
 
 		lines = grep_process.communicate()[0]
 
 		ret = []
 		for label in lines.decode().split("\n"):
-			ret.append(responses.BuildCompletionData(re.sub(r".*\label{([^}]*)}.*", r"\1", label)))
+			ret.append(responses.BuildCompletionData(re.sub(r'.*\\label{([^}]*)}.*', r'\1', label)))
 
 		return ret
 
